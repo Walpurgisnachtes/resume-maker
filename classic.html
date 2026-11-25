@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<title>{{name}} | Resume</title>
+<style>
+  @page { size: Letter; margin: 0; }
+  :root { --paper-width: 8.5in; --paper-height: 11in; }
+  * { box-sizing: border-box; }
+  body { margin: 0; color: #111; }
+  .resume { width: var(--paper-width); min-height: var(--paper-height); padding: .5in; overflow-wrap: anywhere; font: 11pt/1.16 "Times New Roman", serif; }
+  h1, h2, p, ul { margin: 0; }
+  section + section { margin-top: 10pt; }
+  h2 { font-size: 13pt; font-weight: normal; border-bottom: .5pt solid currentColor; margin-bottom: 4pt; }
+  .pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, auto); align-items: baseline; column-gap: 12pt; }
+  .pair > :last-child { text-align: right; max-width: 2.1in; }
+  .entries > li + li { margin-top: 7pt; }
+  .entries ul { padding-left: 1em; margin-top: 2pt; }
+  .jake > header { margin-bottom: 10pt; }
+  .jake h1 { color: #2f3947; font-size: 30pt; line-height: 1.12; }
+  .jake .contact { font-size: 14pt; background: #f0f0f2; }
+  .jake h2 { color: #242a2c; text-transform: uppercase; letter-spacing: .105em; }
+  .jake .entries { list-style: none; padding: 0; }
+  .jake .entries ul { list-style: disc; }
+  .jake .primary, .jake .project-heading > :last-child { font-weight: bold; }
+  .jake .project-heading > :first-child { font-weight: normal; }
+  .jake .technical-skills li + li { margin-top: 1pt; }
+  .sb2nov { font-family: "Latin Modern Roman", "Computer Modern", "Century Schoolbook", "Times New Roman", serif; font-size: 11pt; }
+  .sb2nov > header { display: grid; grid-template-columns: 1fr 1fr; gap: 10pt; margin-bottom: 13pt; }
+  .sb2nov h1 { font-size: 15.5pt; }
+  .sb2nov .contact { text-align: right; }
+  .sb2nov h2 { font-variant: small-caps; }
+  .sb2nov .entries { padding-left: 11pt; }
+  .sb2nov .entries ul { list-style: circle; padding-left: 23pt; }
+  .sb2nov .primary > :first-child { font-weight: bold; }
+  .sb2nov .secondary { font-style: italic; }
+  .sb2nov .projects li + li { margin-top: 2pt; }
+  @media screen {
+    .resume { margin-inline: auto; zoom: min(1, calc(100vw / var(--paper-width)), calc(100vh / var(--paper-height))); }
+  }
+  @media print { .resume { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }
+</style>
+<main class="resume {{format}}">
+  <header>{{heading}}</header>
+  {{sections}}
+</main>
+</html>

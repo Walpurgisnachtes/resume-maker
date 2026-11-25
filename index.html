@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resume Maker</title>
+  <link rel="stylesheet" href="/app.css">
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <main>
+    <header class="masthead">
+      <p class="eyebrow">APPLICATION TOOLKIT / 01</p>
+      <h1>Resume Maker</h1>
+      <p>Choose a template and export a one-page resume. Your data stays on this computer.</p>
+    </header>
+    <form id="resume-form">
+      <fieldset>
+        <legend>Resume format</legend>
+        <label>Template
+          <select name="format">
+            <option value="reference">Reference (two-column)</option>
+            <option value="jake">Jake's Resume</option>
+            <option value="sb2nov">sb2nov / Resume</option>
+          </select>
+        </label>
+      </fieldset>
+      <details class="quick-import">
+        <summary>Quick import</summary>
+        <p>Already have a resume or career notes? Copy the prompt below into Gemini or another AI assistant. Add only the information you're comfortable sharing, then bring the assistant's plain-text reply back here to fill the form. Resume Maker does not send anything to the assistant.</p>
+        <section class="ai-prompt" aria-labelledby="ai-prompt-title">
+          <header>
+            <h2 id="ai-prompt-title">AI Prompt</h2>
+            <button id="copy-prompt" type="button" aria-label="Copy AI prompt">
+              <span class="copy-label" aria-hidden="true">Copy</span>
+              <span class="copy-tick" aria-hidden="true"></span>
+            </button>
+          </header>
+          <pre id="ai-prompt-text">Convert the resume or career notes I provide into Resume Maker import text.
+
+If I haven't supplied any source material, ask me to paste it. Once I supply it, return only the import text, with no Markdown fences, preamble, or commentary. Use only facts supported by my material. Do not invent contact details, dates, qualifications, skills, or achievements. The values below are examples, not facts about me.
+
+Use one key: value per line and the exact keys shown below. Omit unsupported fields and empty sections. Start each degree, skills group, job, or project with a new matching bracketed header. Every education, experience, or project block must have a title; every skills block must have at least one skill. Repeat role, link, introduction, skill, or highlight on separate lines for multiple values. Keep each value on a single line.
+
+[details]
+name: Alex Morgan
+role: Software
+role: Engineer
+location: Hong Kong
+contactNote: Open to remote work
+email: alex@example.com
+phone: +852 1234 5678
+link: https://example.com/portfolio
+introduction: I build and maintain web applications.
+
+[education]
+title: BSc Computer Science
+school: Example University
+location: Hong Kong
+dates: 2018 - 2022
+highlight: Built an accessible campus map.
+
+[skills]
+group: Technical
+skill: JavaScript
+skill: Python
+
+[experience]
+title: Software Engineer
+employer: Example Studio
+location: Hong Kong
+dates: 2022 - Present
+highlight: Built an internal reporting tool.
+
+[projects]
+title: Neighborhood events tracker
+technologies: JavaScript, SQLite
+dates: 2024
+highlight: Built a searchable directory of community events.</pre>
+          <p id="copy-status" role="status"></p>
+        </section>
+        <p id="import-help">Paste the reply below, not the prompt itself. You can also write the import text by hand. Importing a section replaces its existing entries; unlisted fields and sections stay unchanged. Add a photo separately.</p>
+        <label for="import-text">Resume details to import</label>
+        <textarea id="import-text" rows="8" spellcheck="false" aria-describedby="import-help"></textarea>
+        <button id="import-details" type="button">Import details</button>
+      </details>
+      <p id="import-status" role="status"></p>
+      <fieldset>
+        <legend>01 / Application</legend>
+        <label>Company <input name="company" required maxlength="120" placeholder="e.g. Acme Studio"></label>
+      </fieldset>
+      <fieldset>
+        <legend>02 / Personal details</legend>
+        <div class="fields">
+          <label>Full name <input name="name" required maxlength="250" autocomplete="name"></label>
+          <label data-formats="reference">Professional title <textarea name="role" rows="2" maxlength="250" placeholder="Use a new line to control the title break."></textarea></label>
+          <label data-formats="reference">Location <input name="location" maxlength="250" placeholder="e.g. Hong Kong"></label>
+          <label>Email <input name="email" type="email" maxlength="250" autocomplete="email"></label>
+          <label>Phone <input name="phone" type="tel" maxlength="250" autocomplete="tel"></label>
+          <label data-formats="reference">Additional contact line (optional) <input name="contactNote" maxlength="250"></label>
+          <label data-formats="reference">Photo (optional; up to 5 MB) <input name="photo" type="file" accept="image/jpeg,image/png,image/webp"></label>
+          <label class="wide">Websites and other contact details (one per line)
+            <textarea name="links" rows="2" maxlength="4000"></textarea>
+          </label>
+        </div>
+      </fieldset>
+      <fieldset data-formats="reference">
+        <legend>03 / Profile</legend>
+        <label>Introduction <textarea name="profile" rows="4" maxlength="4000" placeholder="Summarize your background and what you bring to the role."></textarea></label>
+      </fieldset>
+      <fieldset>
+        <legend>04 / Education</legend>
+        <div id="education" class="rows"></div>
+        <button type="button" data-add="education">+ Add education</button>
+      </fieldset>
+      <fieldset id="experience-fields">
+        <legend id="experience-legend">06 / Experience</legend>
+        <div id="experience" class="rows"></div>
+        <button type="button" data-add="experience">+ Add experience</button>
+      </fieldset>
+      <fieldset data-formats="jake sb2nov" hidden>
+        <legend>06 / Projects</legend>
+        <div id="projects" class="rows"></div>
+        <button type="button" data-add="projects">+ Add project</button>
+      </fieldset>
+      <fieldset id="skills-fields" data-formats="reference jake">
+        <legend id="skills-legend">05 / Skills</legend>
+        <div id="skills" class="rows"></div>
+        <button type="button" data-add="skills">+ Add skill group</button>
+      </fieldset>
+      <div class="actions">
+        <button id="save-draft" type="button" aria-describedby="draft-help">Save draft locally</button>
+        <button type="submit" name="action" value="preview">Preview HTML</button>
+        <button type="submit" name="action" value="generate" class="primary">Generate PDF</button>
+      </div>
+      <small id="draft-help">Saves one draft in this browser and restores it when you reopen the app at the same address. Avoid saving personal details on a shared computer.</small>
+      <p id="draft-status" role="status"></p>
+      <p id="status" role="status"></p>
+    </form>
+  </main>
+  <dialog id="preview">
+    <header><h2>Resume preview</h2><button id="close-preview" type="button">Close</button></header>
+    <iframe title="Rendered resume" sandbox></iframe>
+  </dialog>
+  <template id="entry-template">
+    <div class="row fields">
+      <label><span data-label="title"></span><input name="title" maxlength="250"></label>
+      <label><span data-label="organization"></span><input name="organization" maxlength="250"></label>
+      <label>Location <input name="location" maxlength="250"></label>
+      <label>Dates <input name="period" maxlength="80" placeholder="e.g. 2022 – Present"></label>
+      <label class="wide">Highlights (one per line) <textarea name="highlights" rows="2" maxlength="4000"></textarea></label>
+      <button type="button" data-remove>Remove entry</button>
+    </div>
+  </template>
+  <template id="skills-template">
+    <div class="row fields">
+      <label class="wide">Group name <input name="group" maxlength="250" placeholder="e.g. Technical"></label>
+      <label class="wide">Skills (one per line) <textarea name="items" rows="3" maxlength="4000"></textarea></label>
+      <button type="button" data-remove>Remove group</button>
+    </div>
+  </template>
+  <template id="projects-template">
+    <div class="row fields">
+      <label class="wide">Project name <input name="title" maxlength="250"></label>
+      <label data-formats="jake">Technologies <input name="technologies" maxlength="250"></label>
+      <label data-formats="jake">Dates <input name="period" maxlength="80"></label>
+      <label class="wide">Description (one highlight per line) <textarea name="highlights" rows="3" maxlength="4000"></textarea></label>
+      <button type="button" data-remove>Remove project</button>
+    </div>
+  </template>
+</body>
+</html>
